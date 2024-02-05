@@ -1,6 +1,9 @@
 package com.example.cleanapistruct.DI
 
+import android.app.Application
+import com.example.cleanapistruct.data.remote.repository.RepositoryImpl
 import com.example.cleanapistruct.data.remote.services.Api
+import com.example.cleanapistruct.domain.repository.Repository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,18 +15,22 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-    @Singleton
     @Provides
+    @Singleton
     fun provideApi(retrofit: Retrofit): Api {
         return retrofit.create(Api::class.java)
     }
-
-    @Singleton
     @Provides
+    @Singleton
+
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder().baseUrl("https://www.colourlovers.com/")
             .addConverterFactory(GsonConverterFactory.create()).build()
+    }
+    @Provides
+    @Singleton
+    fun provideRepositoryInterface(api:Api,app:Application):Repository{
+        return RepositoryImpl(api,app)
     }
 
 
