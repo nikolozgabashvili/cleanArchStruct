@@ -4,9 +4,9 @@ import com.example.cleanapistruct.data.remote.model.ColorDto
 import com.example.cleanapistruct.domain.model.Color
 
 fun ColorDto.RgbDto.toRgb(): Color.Rgb {
-    val r = red
-    val g = green
-    val b = blue
+    val r = this.red
+    val g = this.green
+    val b = this.blue
     return Color.Rgb(r, g, b)
 }
 
@@ -24,20 +24,24 @@ fun ColorDto.toColor(): Color {
     return Color(
         apiUrl = apiUrl,
         badgeUrl = badgeUrl,
-        dateCreated=dateCreated,
+        dateCreated = dateCreated,
         description = description,
         hex = hex,
         hsv = hsv,
         id = id,
         imageUrl = imageUrl,
-        numComments=numHearts,
-        numHearts,
-        numViews,
-        numVotes,
-        rank,
-        rgb,
-        title,
-        url,
-        userName
+        numComments = numHearts,
+        rgb = Color.Rgb(
+            this.rgb?.red,
+            this.rgb?.green,
+            this.rgb?.blue
+        ),
+        numHearts = numHearts,
+        numViews = numViews,
+        numVotes = numVotes,
+        rank = rank,
+        title = title,
+        url = url,
+        userName = userName
     )
 }

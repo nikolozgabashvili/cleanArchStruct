@@ -7,13 +7,13 @@ data class Color(
     val description: String?,
     val hex: String?,
     val hsv: Hsv?,
-    val id: Int?,
+    val id: Long?,
     val imageUrl: String?,
-    val numComments: Int?,
-    val numHearts: Int?,
-    val numViews: Int?,
-    val numVotes: Int?,
-    val rank: Int?,
+    val numComments: Long?,
+    val numHearts: Long?,
+    val numViews: Long?,
+    val numVotes: Long?,
+    val rank: Long?,
     val rgb: Rgb?,
     val title: String?,
     val url: String?,
@@ -26,8 +26,8 @@ data class Color(
     )
 
     data class Rgb(
-        val blue: Int?,
+        val red: Int?,
         val green: Int?,
-        val red: Int?
+        val blue: Int?
     )
 }
