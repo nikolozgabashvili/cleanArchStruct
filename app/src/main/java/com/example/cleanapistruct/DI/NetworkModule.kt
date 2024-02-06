@@ -1,5 +1,6 @@
 package com.example.cleanapistruct.DI
 
+
 import com.example.cleanapistruct.data.remote.services.Api
 import dagger.Module
 import dagger.Provides
@@ -22,8 +23,11 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideRetrofit(): Retrofit {
-        return Retrofit.Builder().baseUrl("https://www.colourlovers.com/")
-            .addConverterFactory(GsonConverterFactory.create()).build()
+        return Retrofit
+            .Builder()
+            .baseUrl("https://www.colourlovers.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
 
