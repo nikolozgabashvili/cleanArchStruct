@@ -1,3 +1,5 @@
+@file:Suppress("IMPLICIT_CAST_TO_ANY")
+
 package com.example.cleanapistruct.common.extension
 
 import android.graphics.drawable.Drawable
@@ -20,8 +22,7 @@ fun View.loadBackground(url: String) {
 }
 
 fun String.formatDt(): String {
-    val st = this.substring(this.length - 2, this.length)
-    val lst2 = when (st) {
+    val lst2 = when (this.substring(this.length - 2, this.length)) {
         "01" -> "იან"
         "02" -> "თებ"
         "03" -> "მარ"
