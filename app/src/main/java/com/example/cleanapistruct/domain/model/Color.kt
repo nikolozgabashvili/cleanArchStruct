@@ -1,30 +1,33 @@
 package com.example.cleanapistruct.domain.model
 
-class Color(
+data class Color(
+    val apiUrl: String?,
+    val badgeUrl: String?,
+    val dateCreated: String?,
+    val description: String?,
+    val hex: String?,
+    val hsv: Hsv?,
     val id: Long?,
-    val title: String?,
-    val userName: String?,
-    val numViews: Long?,
+    val imageUrl: String?,
     val numComments: Long?,
     val numHearts: Long?,
+    val numViews: Long?,
+    val numVotes: Long?,
     val rank: Long?,
-    val dateCreated: String?,
-    val hex: String?,
-    val rgb: RGB?,
-    val hsv: HSV?,
-    val description: String?,
+    val rgb: Rgb?,
+    val title: String?,
     val url: String?,
-    val imageUrl: String?,
-    val badgeUrl: String?,
-    val apiUrl: String?
-
+    val userName: String?
 ) {
-    data class RGB(
-        val red: Int?, val green: Int?, val blue: Int?
+    data class Hsv(
+        val hue: Int?,
+        val saturation: Int?,
+        val value: Int?
     )
 
-    data class HSV(
-        val hue: Int?, val saturation: Int?, val value: Int?
-
+    data class Rgb(
+        val red: Int?,
+        val green: Int?,
+        val blue: Int?
     )
 }

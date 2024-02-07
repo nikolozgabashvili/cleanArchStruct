@@ -1,53 +1,129 @@
 package com.example.cleanapistruct.presentation.fragments
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.example.cleanapistruct.R
+
+import android.util.Log
+import android.widget.SearchView
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.cleanapistruct.MainViewModel
 import com.example.cleanapistruct.databinding.FragmentListBinding
-import com.example.cleanapistruct.presentation.MainViewModel
+import com.example.cleanapistruct.domain.model.Color
+import com.example.cleanapistruct.presentation.ConnectivityObserver
+import com.example.cleanapistruct.presentation.NetworkConObserver
 import com.example.cleanapistruct.presentation.adapter.ColorAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 
-class ListFragment : Fragment() {
+@AndroidEntryPoint
+class ListFragment : BaseFragment<FragmentListBinding>(
+    FragmentListBinding::inflate
+) {
 
-    private var _Binding: FragmentListBinding? = null
-    private val binding get() = _Binding!!
 
     private lateinit var adapter: ColorAdapter
-    private lateinit var viewModel: MainViewModel
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _Binding = FragmentListBinding.inflate(inflater,container,false)
-        return binding.root
+    private lateinit var recyclerView: RecyclerView
+    private val mainViewModel: MainViewModel by activityViewModels()
+
+    private lateinit var connectivityObserver: ConnectivityObserver
+
+
+    private var searchJob: Job? = null
+    private val delay: Long = 400
+
+
+
+
+    override fun started() {
+        listenToSearchView()
+        connectivityObserver = NetworkConObserver(requireContext())
+        connectivityObserver.observe().onEach {
+            if (it == ConnectivityObserver.Status.ONLYDATA || it ==ConnectivityObserver.Status.AVAILABLE) {
+
+                mainViewModel.getAllColorName(binding.searchBar.query.toString())
+            }
+
+
+
+        }.launchIn(lifecycleScope)
+
+
+
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = defaultViewModelProviderFactory.create(MainViewModel::class.java)
+    private fun listenToSearchView() {
+        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
 
-        println(viewModel.getData())
+            override fun onQueryTextChange(newText: String?): Boolean {
 
-        listeners()
+                searchJob?.cancel()
+
+
+                searchJob = CoroutineScope(Dispatchers.Main).launch {
+                    delay(delay)
+
+                    newText?.let {
+                        try {
+                            mainViewModel.getAllColorName(it)
+                        }catch (
+                            e:Exception
+                        ){
+                            Log.e("error", "onQueryTextChange: error", )
+                        }
+
+                    }
+                }
+
+                return true
+            }
+
+
+        })
     }
 
-    private fun listeners() {
 
-        adapter.onItemClickListener = { item ->
-
+    private fun click(color: Color) {
+        color.id?.let {
+            val action = ListFragmentDirections.actionListFragmentToInfoFragment(it)
+            findNavController().navigate(action)
         }
 
     }
 
+    private fun update(data: List<Color> = emptyList()) {
+        adapter = ColorAdapter(data)
+        recyclerView = binding.recyclerView
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter.onItemClick = {
+            click(it)
+        }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _Binding = null
     }
 
+    override fun observers() {
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainViewModel.success.collect {
+
+                update(it)
+
+
+            }
+
+        }
+
+    }
 }
