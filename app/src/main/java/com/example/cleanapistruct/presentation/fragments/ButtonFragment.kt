@@ -48,12 +48,19 @@ class ButtonFragment : Fragment() {
         connectivityObserver = NetworkConObserver(requireContext())
         connectivityObserver.observe().onEach {
 
-            if (it != ConnectivityObserver.Status.AVAILABLE ) {
+            if (it == ConnectivityObserver.Status.AVAILABLE ) {
+                binding.button.visibility = View.INVISIBLE
+
+            }else{
                 binding.button.visibility = View.VISIBLE
 
             }
 
+
         }.launchIn(lifecycleScope)
+
+        binding.button.visibility = View.VISIBLE
+
 
     }
 

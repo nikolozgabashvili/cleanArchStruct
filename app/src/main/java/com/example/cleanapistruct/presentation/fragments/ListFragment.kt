@@ -37,7 +37,6 @@ class ListFragment : BaseFragment<FragmentListBinding>(
     private lateinit var connectivityObserver: ConnectivityObserver
 
 
-    private var data: List<Color>? = null
     private var searchJob: Job? = null
     private val delay: Long = 400
 
@@ -48,7 +47,7 @@ class ListFragment : BaseFragment<FragmentListBinding>(
         listenToSearchView()
         connectivityObserver = NetworkConObserver(requireContext())
         connectivityObserver.observe().onEach {
-            if (it == ConnectivityObserver.Status.AVAILABLE ||it ==ConnectivityObserver.Status.ONLYDATA) {
+            if (it == ConnectivityObserver.Status.ONLYDATA || it ==ConnectivityObserver.Status.AVAILABLE) {
 
                 mainViewModel.getAllColorName(binding.searchBar.query.toString())
             }
