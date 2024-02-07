@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/listFragment">
+    app:startDestination="@id/buttonFragment">
 
     <fragment
 
         android:id="@+id/listFragment"
         android:name="com.example.cleanapistruct.presentation.fragments.ListFragment"
         android:label="fragment_list"
-        tools:layout="@layout/fragment_list"
-        >
+        tools:layout="@layout/fragment_list">
         <action
             android:id="@+id/action_listFragment_to_infoFragment"
             app:destination="@id/infoFragment" />
@@ -21,10 +20,24 @@
         android:name="com.example.cleanapistruct.presentation.fragments.InfoFragment"
         android:label="fragment_info"
 
-        tools:layout="@layout/fragment_info" >
-            <argument
+        tools:layout="@layout/fragment_info">
+        <argument
             android:name="colorId"
-            app:argType="long"
-            android:defaultValue="0L" />
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/buttonFragment"
+        android:name="com.example.cleanapistruct.presentation.fragments.ButtonFragment"
+        android:label="fragment_button"
+
+
+        tools:layout="@layout/fragment_button">
+        <action
+            android:id="@+id/action_buttonFragment_to_listFragment"
+            app:destination="@id/listFragment"
+            app:popUpTo="@id/buttonFragment"
+
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

@@ -5,14 +5,19 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cleanapistruct.domain.model.Color
 import com.example.cleanapistruct.domain.repository.Repository
+import com.example.cleanapistruct.presentation.ConnectivityObserver
+import com.example.cleanapistruct.presentation.NetworkConObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -33,45 +38,57 @@ class MainViewModel @Inject constructor(
     private var filteredColor: Color? = null
     val myColor get() = filteredColor
 
-    var myData: List<Color>? = null
+
 
     init {
         getAllColors()
 
+
     }
 
 
 
-    private fun getAllColors() {
-        viewModelScope.launch {
-            repository.getColors().collect { resource ->
+     fun getAllColors() {
+         try {
+             viewModelScope.launch {
+                 repository.getColors().collect { resource ->
+                     resource.data?.let {
 
-                resource.data?.let {
-                    _success.value = it
-                }
+                         Log.d("request", "getAllColors: ${it}")
+                         _success.value = it
+                     }
 
-            }
+                 }
 
-        }
+             }
+         }catch (e:Exception){
+             Log.e("error", "getAllColors: error", )
+         }
 
     }
 
     fun getAllColorName(key: String) {
-        viewModelScope.launch {
-            repository.getColorsForName(key).collect { resource ->
+        try {
 
-                resource.data?.let {
-                    if (key.length > 2)
 
-                        _success.value = writeInMap(it)
-                    else
-                        _success.value = it
+            viewModelScope.launch {
+                repository.getColorsForName(key).collect { resource ->
 
+                    resource.data?.let {
+                        if (key.length > 2)
+
+                            _success.value = writeInMap(it)
+                        else
+                            _success.value = it
+
+
+                    }
 
                 }
 
             }
-
+        }catch (e:Exception){
+            Log.e("error", "getAllColorName: error", )
         }
 
     }
