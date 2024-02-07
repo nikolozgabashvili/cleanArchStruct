@@ -1,23 +1,17 @@
 package com.example.cleanapistruct
 
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
+
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cleanapistruct.domain.model.Color
 import com.example.cleanapistruct.domain.repository.Repository
-import com.example.cleanapistruct.presentation.ConnectivityObserver
-import com.example.cleanapistruct.presentation.NetworkConObserver
+
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class MainViewModel @Inject constructor(

@@ -1,19 +1,14 @@
 package com.example.cleanapistruct.presentation.fragments
 
-import android.content.Context
-import android.content.IntentFilter
-import android.net.wifi.WifiManager
+
 import android.util.Log
 import android.widget.SearchView
-import androidx.annotation.LongDef
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cleanapistruct.MainViewModel
-import com.example.cleanapistruct.R
 import com.example.cleanapistruct.databinding.FragmentListBinding
 import com.example.cleanapistruct.domain.model.Color
 import com.example.cleanapistruct.presentation.ConnectivityObserver
@@ -27,7 +22,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint

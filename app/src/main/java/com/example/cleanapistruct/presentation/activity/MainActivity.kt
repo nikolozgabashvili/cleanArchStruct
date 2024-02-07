@@ -1,10 +1,7 @@
 package com.example.cleanapistruct.presentation.activity
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
+
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
