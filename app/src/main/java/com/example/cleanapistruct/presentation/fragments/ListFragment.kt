@@ -40,10 +40,15 @@ class ListFragment : BaseFragment<FragmentListBinding>(
     private var searchJob: Job? = null
     private val delay: Long = 400
 
+    override fun onPause() {
+        super.onPause()
+        mainViewModel.setStateText(binding.searchBar.query.toString())
 
+    }
 
 
     override fun started() {
+        binding.searchBar.setQuery(mainViewModel.getStateText(),true)
         listenToSearchView()
         connectivityObserver = NetworkConObserver(requireContext())
         connectivityObserver.observe().onEach {

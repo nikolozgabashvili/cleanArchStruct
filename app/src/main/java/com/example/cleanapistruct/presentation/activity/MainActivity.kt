@@ -2,6 +2,7 @@ package com.example.cleanapistruct.presentation.activity
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -12,6 +13,7 @@ import com.example.cleanapistruct.presentation.NetworkConObserver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.function.LongFunction
 
 
 @AndroidEntryPoint

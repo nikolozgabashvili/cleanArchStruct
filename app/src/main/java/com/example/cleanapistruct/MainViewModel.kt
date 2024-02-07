@@ -1,7 +1,6 @@
 package com.example.cleanapistruct
 
 
-
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,6 +31,12 @@ class MainViewModel @Inject constructor(
     private var filteredColor: Color? = null
     val myColor get() = filteredColor
 
+    private var searchStateText:String = ""
+    fun setStateText(string: String){
+        searchStateText = string
+    }
+    fun getStateText():String = searchStateText
+
 
 
     init {
@@ -41,23 +46,22 @@ class MainViewModel @Inject constructor(
     }
 
 
+    fun getAllColors() {
+        try {
+            viewModelScope.launch {
+                repository.getColors().collect { resource ->
+                    resource.data?.let {
 
-     fun getAllColors() {
-         try {
-             viewModelScope.launch {
-                 repository.getColors().collect { resource ->
-                     resource.data?.let {
+                        Log.d("request", "getAllColors: ${it}")
+                        _success.value = it
+                    }
 
-                         Log.d("request", "getAllColors: ${it}")
-                         _success.value = it
-                     }
+                }
 
-                 }
-
-             }
-         }catch (e:Exception){
-             Log.e("error", "getAllColors: error", )
-         }
+            }
+        } catch (e: Exception) {
+            Log.e("error", "getAllColors: error")
+        }
 
     }
 
@@ -81,8 +85,8 @@ class MainViewModel @Inject constructor(
                 }
 
             }
-        }catch (e:Exception){
-            Log.e("error", "getAllColorName: error", )
+        } catch (e: Exception) {
+            Log.e("error", "getAllColorName: error")
         }
 
     }
