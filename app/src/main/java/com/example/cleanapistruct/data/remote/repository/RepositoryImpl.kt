@@ -19,6 +19,8 @@ class RepositoryImpl @Inject constructor(
     override suspend fun getColors(): Flow<Resource<List<Color>>> = flow {
         try {
 
+            // todo ეს ქვედა კომენტარი მოხსენი აბა და რა მოხდება კოდში?
+           // val a = 5/0
 
             val response = api.getColors()
 
@@ -29,6 +31,7 @@ class RepositoryImpl @Inject constructor(
 
             }
         }catch (e:Exception){
+
             Log.e("interror", "getColors: no internet", )
         }
 
@@ -40,6 +43,8 @@ class RepositoryImpl @Inject constructor(
     override suspend fun getColorsForName(key: String): Flow<Resource<List<Color>>> = flow {
 
         try {
+            // todo ეს ქვედა კომენტარი მოხსენი აბა და რა მოხდება კოდში?
+          //  val a = 5/0
             val response = api.getColorsForName(key)
 
             if (response.isSuccessful) {

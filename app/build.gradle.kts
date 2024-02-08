@@ -32,7 +32,7 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
-            )
+            ) // todo რათ გიმნდა ეს პროგარდ?
         }
     }
     compileOptions {

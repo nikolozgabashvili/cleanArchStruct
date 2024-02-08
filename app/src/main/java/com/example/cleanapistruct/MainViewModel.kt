@@ -47,6 +47,7 @@ class MainViewModel @Inject constructor(
 
 
     fun getAllColors() {
+        // todo try აქ გჭირდება ნამდვილად?
         try {
             _loading.value = true
             viewModelScope.launch {
@@ -68,6 +69,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun getAllColorName(key: String) {
+        // todo try აქ გჭირდება ნამდვილად?
+        // todo აპლიკაციის ჩართვისას, აქა შემოდის და ზედა მეთოდშიც, არდა სერჩში არაფერი ჩმიწერია
         try {
             _loading.value = true
 

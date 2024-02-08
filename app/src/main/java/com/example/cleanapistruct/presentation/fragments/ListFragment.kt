@@ -34,7 +34,7 @@ class ListFragment : BaseFragment<FragmentListBinding>(
 
     private lateinit var adapter: ColorAdapter
     private lateinit var recyclerView: RecyclerView
-    private val mainViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels() // todo რატომ activityViewModels და არა viewmodels მაგალითად
 
     private lateinit var connectivityObserver: ConnectivityObserver
 
@@ -45,7 +45,7 @@ class ListFragment : BaseFragment<FragmentListBinding>(
     override fun onPause() {
         super.onPause()
         mainViewModel.setStateText(binding.searchBar.query.toString())
-
+        // todo რამე სხვა გზა არ არის სტეიტის შესანახ კონფიგურაციის ცვლილებისას?
     }
 
 
@@ -61,7 +61,7 @@ class ListFragment : BaseFragment<FragmentListBinding>(
             }
         }
 
-        binding.searchBar.setQuery(mainViewModel.getStateText(),true)
+        binding.searchBar.setQuery(mainViewModel.getStateText(),true) // todo ზედას გაგრძელება აქაც. რამ ე სხვა გზას არ გვაძლევს ანდროიდი სტეიტის აღსადგენად?
         listenToSearchView()
         connectivityObserver = NetworkConObserver(requireContext())
         connectivityObserver.observe().onEach {
@@ -86,10 +86,13 @@ class ListFragment : BaseFragment<FragmentListBinding>(
 
             override fun onQueryTextChange(newText: String?): Boolean {
 
+                // todo Job-ები viewmodel-ის სასტავია, ფრაგმენტში (ნუ ამ შემთხვევაში მაინც) არ უნდა გქონდეს
+                // ეს ფუნქციონალი შეგიძლაი ვიუმოდელში აიტანო
                 searchJob?.cancel()
 
 
                 searchJob = CoroutineScope(Dispatchers.Main).launch {
+                    // todo search for "debounce"
                     delay(delay)
 
                     newText?.let {
@@ -121,7 +124,7 @@ class ListFragment : BaseFragment<FragmentListBinding>(
     }
 
     private fun update(data: List<Color> = emptyList()) {
-        adapter = ColorAdapter(data)
+        adapter = ColorAdapter(data) // todo ნებისმიერ რეფრეშზე ან სერჩზე - ადაპტერს თავიდან რატომ ქმნი
         recyclerView = binding.recyclerView
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
