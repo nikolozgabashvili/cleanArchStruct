@@ -22,8 +22,8 @@ class MainViewModel @Inject constructor(
     private val _success = MutableStateFlow<List<Color>>(emptyList())
     val success: MutableStateFlow<List<Color>> = _success
 
-    private val _loading = MutableStateFlow<List<Boolean>>(emptyList())
-    val loading: MutableStateFlow<List<Boolean>> = _loading
+    private val _loading = MutableStateFlow<Boolean>(false)
+    val loading: MutableStateFlow<Boolean> = _loading
 
     private val _error = MutableStateFlow<List<String>>(emptyList())
     val error: MutableStateFlow<List<String>> = _error
@@ -48,12 +48,14 @@ class MainViewModel @Inject constructor(
 
     fun getAllColors() {
         try {
+            _loading.value = true
             viewModelScope.launch {
                 repository.getColors().collect { resource ->
                     resource.data?.let {
 
                         Log.d("request", "getAllColors: ${it}")
                         _success.value = it
+                        _loading.value=false
                     }
 
                 }
@@ -67,7 +69,7 @@ class MainViewModel @Inject constructor(
 
     fun getAllColorName(key: String) {
         try {
-
+            _loading.value = true
 
             viewModelScope.launch {
                 repository.getColorsForName(key).collect { resource ->
@@ -78,7 +80,7 @@ class MainViewModel @Inject constructor(
                             _success.value = writeInMap(it)
                         else
                             _success.value = it
-
+                        _loading.value = false
 
                     }
 

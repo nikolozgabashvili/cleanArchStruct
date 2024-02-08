@@ -2,6 +2,7 @@ package com.example.cleanapistruct.presentation.fragments
 
 
 import android.util.Log
+import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -48,6 +50,17 @@ class ListFragment : BaseFragment<FragmentListBinding>(
 
 
     override fun started() {
+        lifecycleScope.launch {
+            mainViewModel.loading.collect {
+                if (it){
+                    binding.progressBar2.visibility = View.VISIBLE
+                }else{
+                    binding.progressBar2.visibility = View.INVISIBLE
+
+                }
+            }
+        }
+
         binding.searchBar.setQuery(mainViewModel.getStateText(),true)
         listenToSearchView()
         connectivityObserver = NetworkConObserver(requireContext())

@@ -33,10 +33,11 @@ class MainActivity : AppCompatActivity() {
                 println("wifi on")
 
                 val navController = findNavController(R.id.my_nav_host_fragment)
-                navController.popBackStack(R.id.buttonFragment, true)
+                val currentFragmentId = navController.currentDestination?.id
+                if (currentFragmentId !=R.id.listFragment) {
 
-                navController.navigate(R.id.listFragment)
-
+                    navController.navigate(R.id.listFragment)
+                }
             }
             if (it == ConnectivityObserver.Status.LOST) {
                 println("wifi off")
