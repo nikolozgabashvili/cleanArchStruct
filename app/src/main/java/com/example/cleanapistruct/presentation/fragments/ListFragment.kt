@@ -150,6 +150,7 @@ class ListFragment : BaseFragment<FragmentListBinding>(
                     mainViewModel.startDebounceJob()
                     mainViewModel.setTextFlow(txt)
                     //აქ ზუსტად არ ვიცი შეიძლება ცოტა ზედმეტიც მიწერია.
+                    //მარა მუშაა რა
 
                 }
 
