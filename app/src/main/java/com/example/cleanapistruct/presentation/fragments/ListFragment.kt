@@ -65,9 +65,13 @@ class ListFragment : BaseFragment<FragmentListBinding>(
         listenToSearchView()
         connectivityObserver = NetworkConObserver(requireContext())
         connectivityObserver.observe().onEach {
-            if (it == ConnectivityObserver.Status.ONLYDATA || it ==ConnectivityObserver.Status.AVAILABLE) {
 
+            if (it == ConnectivityObserver.Status.LOST) {
+                mainViewModel.setPrevStatus(ConnectivityObserver.Status.LOST)
+            }
+            if (mainViewModel.getPrevStatus()==ConnectivityObserver.Status.LOST) {
                 mainViewModel.getAllColorName(binding.searchBar.query.toString())
+                mainViewModel.setPrevStatus(it)
             }
 
 
