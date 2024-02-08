@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cleanapistruct.domain.model.Color
 import com.example.cleanapistruct.domain.repository.Repository
+import com.example.cleanapistruct.presentation.ConnectivityObserver
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +38,11 @@ class MainViewModel @Inject constructor(
     }
     fun getStateText():String = searchStateText
 
-
+    private var previousNetState:ConnectivityObserver.Status = ConnectivityObserver.Status.LOST
+    fun setPrevStatus(status:ConnectivityObserver.Status){
+        previousNetState = status
+    }
+    fun getPrevStatus() = previousNetState
 
     init {
         getAllColors()
