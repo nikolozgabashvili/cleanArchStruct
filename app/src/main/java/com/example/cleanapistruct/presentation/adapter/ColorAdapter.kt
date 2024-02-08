@@ -1,5 +1,6 @@
 package com.example.cleanapistruct.presentation.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,9 +8,18 @@ import com.example.cleanapistruct.common.extension.loadBackground
 import com.example.cleanapistruct.databinding.CardItemBinding
 import com.example.cleanapistruct.domain.model.Color
 
-class ColorAdapter(private val list: List<Color>) :
-    RecyclerView.Adapter<ColorAdapter.MyViewHolder>() {
+class ColorAdapter(
+
+) : RecyclerView.Adapter<ColorAdapter.MyViewHolder>()  {
     class MyViewHolder(val binding: CardItemBinding) : RecyclerView.ViewHolder(binding.root)
+    private var list: List<Color> = emptyList()
+
+    fun setList(list:List<Color>) {
+        this.list = list
+        Log.d("listtag", "setList: list$list")
+        notifyDataSetChanged()
+
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = CardItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)

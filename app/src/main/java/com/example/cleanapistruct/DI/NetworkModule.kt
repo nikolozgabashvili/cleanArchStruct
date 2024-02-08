@@ -8,8 +8,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -26,7 +28,8 @@ object NetworkModule {
     fun provideRetrofit(): Retrofit {
         return Retrofit
             .Builder()
-            .baseUrl("https://www.colourlovers.com/")
+            .client(client)
+            .baseUrl("https://www.colourlovers.com/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -39,6 +42,12 @@ object NetworkModule {
     fun provideRepositoryInterface(api: Api): Repository {
         return RepositoryImpl(api)
     }
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
+
 
 
 }

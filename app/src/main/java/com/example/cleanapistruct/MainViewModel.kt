@@ -1,18 +1,21 @@
 package com.example.cleanapistruct
 
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cleanapistruct.common.Resource.Status
 import com.example.cleanapistruct.domain.model.Color
 import com.example.cleanapistruct.domain.repository.Repository
 import com.example.cleanapistruct.presentation.ConnectivityObserver
-
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: Repository
@@ -20,81 +23,96 @@ class MainViewModel @Inject constructor(
 
 ) : ViewModel() {
 
+    private val debounceDelay = 400L
+
     private val _success = MutableStateFlow<List<Color>>(emptyList())
     val success: MutableStateFlow<List<Color>> = _success
 
-    private val _loading = MutableStateFlow<Boolean>(false)
+    private val _loading = MutableStateFlow(false)
     val loading: MutableStateFlow<Boolean> = _loading
 
-    private val _error = MutableStateFlow<List<String>>(emptyList())
-    val error: MutableStateFlow<List<String>> = _error
+    private val _error = MutableStateFlow("")
+    val error: MutableStateFlow<String> = _error
 
     private var filteredColor: Color? = null
     val myColor get() = filteredColor
 
-    private var searchStateText:String = ""
-    fun setStateText(string: String){
+
+    private var debounceJob: Job? = null
+
+    private var searchStateText: String = ""
+    fun setStateText(string: String) {
         searchStateText = string
     }
-    fun getStateText():String = searchStateText
 
-    private var previousNetState:ConnectivityObserver.Status = ConnectivityObserver.Status.LOST
-    fun setPrevStatus(status:ConnectivityObserver.Status){
+    fun getStateText(): String = searchStateText
+    private val _textFlow = MutableStateFlow("")
+    val textFlow: MutableStateFlow<String> = _textFlow
+
+    fun setTextFlow(key: String) {
+        _textFlow.value = key
+    }
+
+    fun cancelDebounceJob(){
+        debounceJob?.cancel()
+    }
+
+
+    private var previousNetState: ConnectivityObserver.Status = ConnectivityObserver.Status.LOST
+    private var curNetState: ConnectivityObserver.Status = ConnectivityObserver.Status.LOST
+    fun setPrevStatus(status: ConnectivityObserver.Status) {
         previousNetState = status
     }
+
     fun getPrevStatus() = previousNetState
 
+    fun setCurStatus(status: ConnectivityObserver.Status) {
+        curNetState = status
+    }
+
+    fun getCurStatus() = curNetState
+
     init {
-        getAllColors()
+        getAllColor()
+
 
 
     }
 
 
-    fun getAllColors() {
-        try {
-            _loading.value = true
-            viewModelScope.launch {
-                repository.getColors().collect { resource ->
-                    resource.data?.let {
+    fun getAllColor(key: String = "") {
 
-                        Log.d("request", "getAllColors: ${it}")
-                        _success.value = it
-                        _loading.value=false
+        _loading.value = true
+
+        viewModelScope.launch {
+            repository.getColors(key).collect { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let {
+                            if (key.length > 2)
+
+                                _success.value = writeInMap(it)
+                            else
+                                _success.value = it
+                            _loading.value = false
+
+                        }
                     }
 
-                }
-
-            }
-        } catch (e: Exception) {
-            Log.e("error", "getAllColors: error")
-        }
-
-    }
-
-    fun getAllColorName(key: String) {
-        try {
-            _loading.value = true
-
-            viewModelScope.launch {
-                repository.getColorsForName(key).collect { resource ->
-
-                    resource.data?.let {
-                        if (key.length > 2)
-
-                            _success.value = writeInMap(it)
-                        else
-                            _success.value = it
+                    Status.ERROR -> {
+                        println("status error returned")
+                        _error.value = resource.message.toString()
                         _loading.value = false
-
                     }
 
+                    Status.LOADING -> _loading.value = true
                 }
 
+
             }
-        } catch (e: Exception) {
-            Log.e("error", "getAllColorName: error")
+
         }
+
 
     }
 
@@ -113,9 +131,19 @@ class MainViewModel @Inject constructor(
             if (it.id == id) {
                 filteredColor = it
             }
+        }
+    }
+
+    fun startDebounceJob() {
+        debounceJob = viewModelScope.launch {
+            println("hehehehe")
+            println(textFlow.value)
+            textFlow.debounce(debounceDelay).collect {
+                getAllColor(it)
+                println("hehehehe")
+            }
 
         }
-
     }
 
 

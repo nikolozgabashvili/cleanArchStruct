@@ -4,8 +4,10 @@ package com.example.cleanapistruct.presentation.fragments
 import android.util.Log
 import android.view.View
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,8 +41,7 @@ class ListFragment : BaseFragment<FragmentListBinding>(
     private lateinit var connectivityObserver: ConnectivityObserver
 
 
-    private var searchJob: Job? = null
-    private val delay: Long = 400
+    
 
     override fun onPause() {
         super.onPause()
@@ -50,29 +51,37 @@ class ListFragment : BaseFragment<FragmentListBinding>(
 
 
     override fun started() {
+        initAdapt()
+        search()
         lifecycleScope.launch {
             mainViewModel.loading.collect {
                 if (it){
                     binding.progressBar2.visibility = View.VISIBLE
                 }else{
                     binding.progressBar2.visibility = View.INVISIBLE
+                    if (mainViewModel.error.value !=""){
+                        Toast.makeText(requireContext(), mainViewModel.error.value, Toast.LENGTH_SHORT).show()
+                    }
 
                 }
             }
         }
 
         binding.searchBar.setQuery(mainViewModel.getStateText(),true)
-        listenToSearchView()
         connectivityObserver = NetworkConObserver(requireContext())
-        connectivityObserver.observe().onEach {
-
+        connectivityObserver.observe()
+            .onEach {
+                val curStatus = mainViewModel.getCurStatus()
+                mainViewModel.setCurStatus(it)
             if (it == ConnectivityObserver.Status.LOST) {
                 mainViewModel.setPrevStatus(ConnectivityObserver.Status.LOST)
+
             }
-            if (mainViewModel.getPrevStatus()==ConnectivityObserver.Status.LOST) {
-                mainViewModel.getAllColorName(binding.searchBar.query.toString())
+            else if(mainViewModel.getPrevStatus()==ConnectivityObserver.Status.LOST){
+                mainViewModel.getAllColor(binding.searchBar.query.toString())
                 mainViewModel.setPrevStatus(it)
             }
+                println(it)
 
 
 
@@ -82,37 +91,15 @@ class ListFragment : BaseFragment<FragmentListBinding>(
 
     }
 
-    private fun listenToSearchView() {
-        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
+    private fun initAdapt() {
+        adapter = ColorAdapter()
+        recyclerView = binding.recyclerView
+        recyclerView.adapter = adapter
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-
-                searchJob?.cancel()
-
-
-                searchJob = CoroutineScope(Dispatchers.Main).launch {
-                    delay(delay)
-
-                    newText?.let {
-                        try {
-                            mainViewModel.getAllColorName(it)
-                        }catch (
-                            e:Exception
-                        ){
-                            Log.e("error", "onQueryTextChange: error", )
-                        }
-
-                    }
-                }
-
-                return true
-            }
-
-
-        })
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter.onItemClick = {
+            click(it)
+        }
     }
 
 
@@ -125,13 +112,10 @@ class ListFragment : BaseFragment<FragmentListBinding>(
     }
 
     private fun update(data: List<Color> = emptyList()) {
-        adapter = ColorAdapter(data)
-        recyclerView = binding.recyclerView
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter.onItemClick = {
-            click(it)
-        }
+        adapter.setList(data)
+
+        Log.d("dataupdate", "update: $data")
+
 
     }
 
@@ -147,5 +131,32 @@ class ListFragment : BaseFragment<FragmentListBinding>(
 
         }
 
+    }
+    private fun search(){
+        val searchView = binding.searchBar
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    if (it.length > 2 || it.isEmpty())
+                        mainViewModel.getAllColor(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val txt = newText ?: ""
+                if (txt.length!=1 && txt.length!=2) {
+                    mainViewModel.cancelDebounceJob()
+                    mainViewModel.startDebounceJob()
+                    mainViewModel.setTextFlow(txt)
+                    //აქ ზუსტად არ ვიცი შეიძლება ცოტა ზედმეტიც მიწერია.
+
+                }
+
+
+                return true
+            }
+
+        })
     }
 }

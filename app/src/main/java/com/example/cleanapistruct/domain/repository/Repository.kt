@@ -5,7 +5,7 @@ import com.example.cleanapistruct.domain.model.Color
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
-    suspend fun getColors(): Flow<Resource<List<Color>>>
-    suspend fun getColorsForName(key:String): Flow<Resource<List<Color>>>
+
+    suspend fun getColors(key:String? = ""): Flow<Resource<List<Color>>>
 
 }

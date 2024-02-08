@@ -21,7 +21,7 @@ fun View.loadImage(
         }
 
         override fun onLoadCleared(placeholder: Drawable?) {
-            TODO("Not yet implemented")
+            //
         }
 
     })

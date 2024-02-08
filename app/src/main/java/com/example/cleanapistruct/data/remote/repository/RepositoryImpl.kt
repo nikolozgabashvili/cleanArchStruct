@@ -16,11 +16,11 @@ class RepositoryImpl @Inject constructor(
 ) : Repository {
 
 
-    override suspend fun getColors(): Flow<Resource<List<Color>>> = flow {
+    override suspend fun getColors(key: String?): Flow<Resource<List<Color>>> = flow {
+
         try {
-
-
-            val response = api.getColors()
+            val response = api.getColors(key)
+            emit(Resource.loading(null))
 
             if (response.isSuccessful) {
                 emit(Resource.success(response.body()?.map { it.toColor() }))
@@ -28,28 +28,11 @@ class RepositoryImpl @Inject constructor(
                 emit(Resource.error("error", null))
 
             }
-        }catch (e:Exception){
-            Log.e("interror", "getColors: no internet", )
         }
 
+        catch (e:Exception){
+            emit(Resource.error("$e", null))
 
-
-
-    }
-
-    override suspend fun getColorsForName(key: String): Flow<Resource<List<Color>>> = flow {
-
-        try {
-            val response = api.getColorsForName(key)
-
-            if (response.isSuccessful) {
-                emit(Resource.success(response.body()?.map { it.toColor() }))
-            } else {
-                emit(Resource.error("error", null))
-
-            }
-        }catch (e:Exception){
-            Log.e("interror", "getColorsForName: interneterror", )
         }
     }
 
