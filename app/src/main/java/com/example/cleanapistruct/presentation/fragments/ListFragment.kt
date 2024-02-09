@@ -71,8 +71,6 @@ class ListFragment : BaseFragment<FragmentListBinding>(
         connectivityObserver = NetworkConObserver(requireContext())
         connectivityObserver.observe()
             .onEach {
-//                val curStatus = mainViewModel.getCurStatus() //es ar damchirda ....
-                mainViewModel.setCurStatus(it)
             if (it == ConnectivityObserver.Status.LOST) {
                 mainViewModel.setPrevStatus(ConnectivityObserver.Status.LOST)
 

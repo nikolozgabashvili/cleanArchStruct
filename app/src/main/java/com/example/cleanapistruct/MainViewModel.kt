@@ -59,18 +59,13 @@ class MainViewModel @Inject constructor(
 
 
     private var previousNetState: ConnectivityObserver.Status = ConnectivityObserver.Status.LOST
-    private var curNetState: ConnectivityObserver.Status = ConnectivityObserver.Status.LOST
     fun setPrevStatus(status: ConnectivityObserver.Status) {
         previousNetState = status
     }
 
     fun getPrevStatus() = previousNetState
 
-    fun setCurStatus(status: ConnectivityObserver.Status) {
-        curNetState = status
-    }
 
-    fun getCurStatus() = curNetState
 
     init {
         getAllColor()
